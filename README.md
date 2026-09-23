@@ -147,3 +147,38 @@ destination at once rather than committing to Photos vs. Files specifically.
 ## License
 
 MIT
+
+## Avatars
+
+```swift
+KitoAvatarPicker(viewModel: picker, size: 96,
+                 shape: .squircle,              // .circle, .roundedSquare
+                 badge: .camera,                // .edit, .plus, .none
+                 ring: [.orange, .pink, .purple])
+```
+
+## Uploads
+
+`KitoMediaDropZone` is a dashed upload area: tap to choose from any source, or drop a file on it.
+Once picked it shows the thumbnail, name and size, with Replace and Remove.
+
+```swift
+KitoMediaDropZone(viewModel: picker, title: "Front of ID", subtitle: "All four corners visible",
+                  systemImage: "person.text.rectangle")
+```
+
+## Several at once
+
+```swift
+@State private var photos = KitoMediaCollectionViewModel(limit: 6)
+
+KitoMediaGrid(viewModel: photos, columns: 3)      // add tile, remove buttons, "Cover" on the first
+KitoAttachmentStrip(viewModel: photos)            // a row for a message composer
+```
+
+## Source styles
+
+`.kitoMediaSourceMenu(picker)` shows the system action sheet; `.kitoMediaSourceSheet(picker)`
+shows large source tiles in a short sheet. `.kitoMediaSourcePickers(picker)` wires up just the
+pickers, for your own source buttons calling `picker.select(_:)`. `picker.load(data:fileName:source:)`
+feeds data from anywhere through the same pipeline.

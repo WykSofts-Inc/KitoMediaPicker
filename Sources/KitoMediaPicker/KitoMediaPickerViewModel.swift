@@ -80,6 +80,15 @@ public final class KitoMediaPickerViewModel: KitoViewModel {
         }
     }
 
+    /// Loads raw data from anywhere (a drop, your own picker) through the same `asset`/`state`
+    /// pipeline; it's decoded as an image when it is one.
+    public func load(data: Data, fileName: String?, source: KitoMediaSource) {
+        let image = UIImage(data: data).map { Image(uiImage: $0) }
+        let result = KitoMediaAsset(image: image, data: data, fileName: fileName, source: source)
+        asset = result
+        state = .loaded(result)
+    }
+
     public func pasteFromClipboard() {
         let pasteboard = UIPasteboard.general
         if pasteboard.hasImages, let uiImage = pasteboard.image {
