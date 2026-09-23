@@ -21,6 +21,18 @@ private struct KitoMediaSourceMenuModifier: ViewModifier {
                     Button(source.label) { viewModel.select(source) }
                 }
             }
+            .kitoMediaSourcePickers(viewModel, allowedFileTypes: allowedFileTypes)
+    }
+}
+
+/// Each source's underlying picker UI (Photos, camera, Files, URL prompt), without a menu, for
+/// custom source-selection UI.
+private struct KitoMediaSourcePickersModifier: ViewModifier {
+    @Bindable var viewModel: KitoMediaPickerViewModel
+    let allowedFileTypes: [UTType]
+
+    func body(content: Content) -> some View {
+        content
             .photosPicker(isPresented: $viewModel.isShowingPhotoPicker, selection: $viewModel.selectedItem, matching: .images)
             .fullScreenCover(isPresented: $viewModel.isShowingCamera) {
                 KitoCameraPicker { image in viewModel.handleCameraCapture(image) }
@@ -36,6 +48,12 @@ private struct KitoMediaSourceMenuModifier: ViewModifier {
 }
 
 public extension View {
+    /// Presents each source's picker when `viewModel.select(_:)` asks for it. `kitoMediaSourceMenu`
+    /// and `kitoMediaSourceSheet` include this; use it directly behind your own source buttons.
+    func kitoMediaSourcePickers(_ viewModel: KitoMediaPickerViewModel, allowedFileTypes: [UTType] = [.image, .pdf, .item]) -> some View {
+        modifier(KitoMediaSourcePickersModifier(viewModel: viewModel, allowedFileTypes: allowedFileTypes))
+    }
+
     /// Wires up every source `viewModel.availableSources` offers — the
     /// confirmation dialog that lets the user pick a source, and each
     /// source's underlying picker UI (Photos, camera, Files). Trigger it by
